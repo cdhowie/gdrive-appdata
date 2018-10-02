@@ -1,27 +1,26 @@
-var _get = require('lodash/get');
-var idxTpl = require('index-template');
+const _get = require('lodash/get');
 
 module.exports = function (file, clientId) {
-  var immediate = true;
+  let immediate = true;
 
-  var authorize = function () {
+  function authorize() {
     return gapi.auth
       .authorize({
         client_id: clientId,
         scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata',
-        immediate: immediate
+        immediate,
       })
       .then(
         function (response) { immediate = true; return response; },
         function (error) { immediate = false; throw error; }
       );
-  };
+  }
 
-  var loadDriveAPI = function () {
+  function loadDriveAPI() {
     return gapi.client.load('drive', 'v3');
-  };
+  }
 
-  var create = function () {
+  function create() {
     return gapi.client.drive.files
       .create({
         fields: 'id',
@@ -30,28 +29,28 @@ module.exports = function (file, clientId) {
       .then(function (response) {
         return _get(response, 'result.id', null);
       });
-  };
+  }
 
-  var getFileId = function () {
+  function getFileId() {
     return gapi.client.drive.files
       .list({
-        q: idxTpl('name="{0}"', file),
+        q: `name="${file}"`,
         spaces: 'appDataFolder',
         fields: 'files(id)'
       })
       .then(function (response) {
         return _get(response, 'result.files[0].id', null) || create();
       });
-  };
+  }
 
-  var prepare = function () {
+  function prepare() {
     return authorize().then(function () {
       return loadDriveAPI().then(getFileId);
     });
-  };
+  }
 
   return {
-    read: function () {
+    read() {
       return prepare().then(function (id) {
         return gapi.client.drive.files
           .get({ fileId: id, alt: 'media' })
@@ -61,11 +60,11 @@ module.exports = function (file, clientId) {
       });
     },
 
-    save: function (data) {
+    save(data) {
       return prepare().then(function (id) {
         return gapi.client
           .request({
-            path: idxTpl('/upload/drive/v3/files/{0}', id),
+            path: `/upload/drive/v3/files/${id}`,
             method: 'PATCH',
             params: { uploadType: 'media' },
             body: JSON.stringify(data)

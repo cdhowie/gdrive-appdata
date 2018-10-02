@@ -4,11 +4,12 @@
   "description": "Javascript utility to store application data to Google Drive app data folder",
   "main": "src/js/main.js",
   "scripts": {
+    "build": "webpack --mode production",
     "test": "istanbul cover jasmine"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adrianbota/gdrive-appdata.git"
+    "url": "git+https://github.com/cdhowie/gdrive-appdata.git"
   },
   "keywords": [
     "google",
@@ -26,13 +27,16 @@
   },
   "homepage": "https://github.com/adrianbota/gdrive-appdata#readme",
   "devDependencies": {
-    "abota-build": "^0.2.0",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
     "deferred": "^0.7.5",
     "istanbul": "^0.4.5",
-    "jasmine": "^2.5.2"
+    "jasmine": "^2.5.2",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "index-template": "^1.0.1",
     "lodash": "^4.13.1"
   }
 }
